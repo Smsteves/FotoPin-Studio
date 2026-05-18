@@ -3,7 +3,7 @@
 > Create interactive photo albums in your browser.
 > Add clickable pins, link photos, write notes, and export self-contained viewers — all locally. No signup. No upload. No tracking.
 
-**🌐 Live demo:** https://smsteves.github.io/FotoPin-Studio/
+**🌐 Live demo:** https://fotopin.app/
 
 
 ## What it does
