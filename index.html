@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FotoPin Studio — Interactive photo albums</title>
+  <meta name="description" content="Create interactive photo albums from your browser. Add clickable pins, link photos, write notes, and export self-contained viewers — no signup, no upload." />
+  <meta name="theme-color" content="#1f2937" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="FotoPin Studio — Interactive photo albums" />
+  <meta property="og:description" content="Create interactive photo albums from your browser. No signup, no upload." />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231f2937'/%3E%3Ccircle cx='32' cy='28' r='10' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Cpath d='M32 38 L32 54' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='28' r='3' fill='%23fff'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">FotoPin Studio</div>
+    </div>
+    <!-- ╔══════════════════════════════════════════════════════════════════════════╗
+         ║  ⚠️⚠️⚠️  TOOLBAR PULSANTI — LAYOUT BLOCCATO — NON MODIFICARE  ⚠️⚠️⚠️  ║
+         ║                                                                        ║
+         ║  L'ordine e la posizione di TUTTI i pulsanti in questa toolbar sono     ║
+         ║  DEFINITIVI e NON devono MAI essere cambiati, spostati, raggruppati    ║
+         ║  diversamente o riordinati per NESSUN motivo.                           ║
+         ║                                                                        ║
+         ║  I separatori (topbar-group-spacer) creano la spaziatura tra i gruppi. ║
+         ║  NON rimuoverli e NON aggiungerne di nuovi.                            ║
+         ║                                                                        ║
+         ║  Ordine gruppi:                                                        ║
+         ║    1. Gestione album: Apri, Nuovo, Salva, Sblocca, Password            ║
+         ║    2. Export embed: Web embed, Web embed protetto                       ║
+         ║    3. Foto: Esporta in chiaro, Reimporta                               ║
+         ║    4. Guide: Mini guida, Guida completa (sempre a destra)              ║
+         ╚══════════════════════════════════════════════════════════════════════════╝ -->
+    <div class="top-actions">
+      <!-- GRUPPO 1: Gestione album -->
+      <button id="openProjectBtn"></button>
+      <button id="newProjectBtn"></button>
+      <button id="saveProjectBtn" class="primary"></button>
+      <button id="unlockAlbumBtn" class="hidden"></button>
+      <button id="showPasswordBtn" class="hidden"></button>
+
+      <!-- ── separatore ── -->
+      <span class="topbar-group-spacer"></span>
+
+      <!-- GRUPPO 2: Export -->
+      <button id="exportMenuBtn" type="button"></button>
+
+      <!-- ── separatore ── -->
+      <span class="topbar-group-spacer"></span>
+
+      <!-- GRUPPO 3: Foto -->
+      <button id="exportClearPhotosBtn" class="hidden"></button>
+      <button id="reimportClearPhotosBtn" class="hidden"></button>
+
+      <!-- ── separatore elastico → spinge le guide a destra ── -->
+      <span class="topbar-guide-spacer"></span>
+
+      <!-- GRUPPO 4: Guide (SEMPRE a destra, MAI spostare) -->
+      <button id="miniGuideBtn"></button>
+      <button id="fullGuideBtn"></button>
+    </div>
+  </header>
+
+  <div class="top-subbar">
+    <div class="top-subbar-spacer language-version-row">
+      <span id="appVersion" class="app-version"></span>
+      <select id="languageSelect" class="language-quick-select" title="Language">
+        <option value="en">English</option>
+        <option value="it">Italiano</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </div>
+    <div class="top-subbar-actions">
+      <button id="startSlideshowBtn" class="primary"></button>
+      <button id="cinematicBtn" type="button" title=""></button>
+      <div class="mode-switch">
+        <button id="modeNavigateBtn" type="button"></button>
+        <button id="modeEditBtn" type="button"></button>
+      </div>
+    </div>
+    <div class="top-subbar-right">
+      <button id="settingsBtn"></button>
+    </div>
+  </div>
+
+  <main id="app" class="layout">
+    <aside class="panel left-panel">
+      <section id="albumControlsSection">
+        <div class="album-title-row">
+          <h2 data-i18n="project"></h2>
+          <button id="verifyPathBtn" type="button"></button>
+        </div>
+        <label class="field-label" for="albumName" data-i18n="albumName"></label>
+        <input id="albumName" type="text" placeholder="Album" />
+        <div class="grid-two">
+          <div>
+            <label class="field-label" for="slideSeconds" data-i18n="slideSeconds"></label>
+            <input id="slideSeconds" type="number" min="1" max="60" step="0.25" />
+          </div>
+          <div>
+            <label class="field-label" for="showCaptionSelect" data-i18n="showCaption"></label>
+            <select id="showCaptionSelect">
+              <option value="true" data-i18n="yes"></option>
+              <option value="false" data-i18n="no"></option>
+            </select>
+          </div>
+        </div>
+        <div class="hint" id="qualityInfo"></div>
+        <div class="hint lock-status" id="lockStatus"></div>
+        <div id="albumGpsSection">
+          <div class="grid-two gps-fields">
+            <div>
+              <label class="field-label" for="albumLatitude" data-i18n="latitude"></label>
+              <input id="albumLatitude" type="number" step="0.000001" placeholder="45.000000" />
+            </div>
+            <div>
+              <label class="field-label" for="albumLongitude" data-i18n="longitude"></label>
+              <input id="albumLongitude" type="number" step="0.000001" placeholder="9.000000" />
+            </div>
+          </div>
+          <div class="row-actions gps-actions">
+            <button id="openMapsBtn" type="button"></button>
+          </div>
+          <label class="field-label" for="albumAddress" data-i18n="addressSearch"></label>
+          <input id="albumAddress" type="text" placeholder="Via Roma 1, Milano" />
+          <div class="row-actions gps-actions">
+            <button id="searchMapsBtn" type="button"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="hidden">
+        <h2 data-i18n="musicMp3"></h2>
+        <input id="musicInput" type="file" accept="audio/mpeg,audio/mp3,audio/*" multiple />
+        <div class="hint" id="musicName"></div>
+        <div id="musicList" class="music-list"></div>
+      </section>
+
+      <section id="photoSection">
+        <h2 data-i18n="photos"></h2>
+        <input id="photoInput" type="file" accept="image/*" multiple />
+        <div id="photoList" class="photo-list"></div>
+      </section>
+    </aside>
+
+    <section class="panel main-panel">
+
+      <div id="imageStage" class="image-stage empty">
+        <div id="emptyMessage" class="empty-message"></div>
+        <img id="mainImage" alt="" />
+        <div id="pinLayer" class="pin-layer"></div>
+        <canvas id="editorMap" class="editor-map"></canvas>
+      </div>
+      <div class="hint" id="editorHint"></div>
+      <div id="linkPhotoConfirmBar" class="link-photo-confirm hidden">
+        <div id="linkPhotoConfirmText" class="link-photo-confirm-text"></div>
+        <div class="link-photo-confirm-actions">
+          <button id="confirmLinkPhotoBtn" class="primary" type="button"></button>
+          <button id="cancelLinkPhotoBtn" type="button"></button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel right-panel">
+      <section id="selectedPhotoSection">
+        <div class="section-title-row">
+          <h2 data-i18n="selectedPhoto"></h2>
+          <button id="deletePhotoBtn" class="danger"></button>
+        </div>
+        <label class="field-label" for="photoTitle" data-i18n="photoTitle"></label>
+        <input id="photoTitle" type="text" />
+        <label class="field-label" for="photoDescription" data-i18n="photoDescription"></label>
+        <textarea id="photoDescription"></textarea>
+        <div class="row-actions">
+          <button id="movePhotoUpBtn"></button>
+          <button id="movePhotoDownBtn"></button>
+        </div>
+      </section>
+      <section>
+        <h2 data-i18n="pointsNotes"></h2>
+        <div id="clipboardBar" class="clipboard-bar hidden"></div>
+        <div id="spotList" class="spot-list"></div>
+      </section>
+    </aside>
+  </main>
+
+  <div id="slideshow" class="slideshow hidden">
+    <div class="slide-toolbar">
+      <div class="slide-left">
+        <button id="slideCinematicBtn" type="button" title=""></button>
+      </div>
+      <div class="slide-center">
+        <button id="slidePlayBtn" class="primary"></button>
+      </div>
+      <div class="slide-right">
+        <button id="musicBtn"></button>
+        <button id="changeMusicBtn" class="hidden"></button>
+        <button id="homeBtn"></button>
+      </div>
+    </div>
+    <div id="slideStage" class="slide-stage">
+      <img id="slideImage" alt="" />
+      <div id="slidePinLayer" class="pin-layer"></div>
+      <div id="slideCaption" class="slide-caption"></div>
+      <div id="slideDescription" class="slide-description"></div>
+      <!-- Mappa percorso -->
+      <canvas id="presentationMap" class="presentation-map"></canvas>
+      <button id="presentationMapBtn" class="presentation-map-btn hidden" title="Mostra mappa">🗺</button>
+    </div>
+    <audio id="audioPlayer"></audio>
+  </div>
+
+  <input id="projectInput" type="file" accept=".zip,.photopin,.photopin.zip,application/zip" class="hidden" />
+  <input id="fotoPinImportInput" type="file" accept=".zip,application/zip" class="hidden" />
+  <input id="clearPhotosImportInput" type="file" accept=".zip,application/zip" class="hidden" />
+  <input id="singlePhotoImportInput" type="file" accept="image/*" class="hidden" />
+  <script src="app.js"></script>
+</body>
+</html>
