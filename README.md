@@ -1,11 +1,10 @@
-# FotoPin Studio
+﻿# FotoPin Studio
 
 > Create interactive photo albums in your browser.
 > Add clickable pins, link photos, write notes, and export self-contained viewers — all locally. No signup. No upload. No tracking.
 
-**🌐 Live demo:** _(replace with your URL after deploy, e.g. `https://smsteves.github.io/fotopin-studio/`)_
+**🌐 Live demo:** https://smsteves.github.io/FotoPin-Studio/
 
----
 
 ## What it does
 
@@ -81,3 +80,4 @@ No frameworks. No backend. No analytics. No trackers.
 ---
 
 _If FotoPin Studio is useful to you, a coffee is always appreciated. ☕_
+
