@@ -78,6 +78,7 @@ Built with vanilla JavaScript, the Web Crypto API, and the File API.
 No frameworks. No backend. No analytics. No trackers.
 
 ---
+FotoPin Studio is currently in preparation.
 
-_If FotoPin Studio is useful to you, a coffee is always appreciated. ☕_
+The Android app will be available soon on Google Play.
 
